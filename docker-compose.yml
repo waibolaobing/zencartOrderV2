@@ -1,8 +1,8 @@
 services:
   # Initialization service - Copy image code to local
   init:
-    image: ghcr.io/kinglingspree/zencart-web-x86:20251209
-    platform: linux/amd64
+    image: ghcr.io/kinglingspree/zencart-web:20251209
+    platform: linux/arm64
     container_name: zencart-init
     volumes:
       - ./code:/tmp/zencart-code
@@ -24,8 +24,8 @@ services:
 
   # Zen Cart Web service (contains complete code)
   web:
-    image: ghcr.io/kinglingspree/zencart-web-x86:20251209
-    platform: linux/amd64
+    image: ghcr.io/kinglingspree/zencart-web:20251209
+    platform: linux/arm64
     container_name: zencart-web
     ports:
       - "8087:8087"
@@ -47,8 +47,8 @@ services:
 
   # MySQL database (contains initialization data)
   db:
-    image: ghcr.io/kinglingspree/zencart-mysql-x86:20251209
-    platform: linux/amd64
+    image: ghcr.io/kinglingspree/zencart-mysql:20251209
+    platform: linux/arm64
     container_name: zencart-mysql
     ports:
       - "3306:3306"
