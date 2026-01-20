@@ -11,8 +11,10 @@
  * @version $Id: DrByte 2020 Oct 19 Modified in v1.5.7a $
  */
 ?>
-<?php 
-  if (!isset($display_as_mobile)) $display_as_mobile = ($detect->isMobile() && !$detect->isTablet() || $_SESSION['layoutType'] == 'mobile' or $detect->isTablet() || $_SESSION['layoutType'] == 'tablet'); 
+<!-- PayPal JavaScript SDK v6 Initialization -->
+<script src="<?php echo DIR_WS_MODULES; ?>payment/paypal/paypal_sdk_v6.js"></script>
+<?php
+  if (!isset($display_as_mobile)) $display_as_mobile = ($detect->isMobile() && !$detect->isTablet() || $_SESSION['layoutType'] == 'mobile' or $detect->isTablet() || $_SESSION['layoutType'] == 'tablet');
 ?>
 <div class="centerColumn" id="shoppingCartDefault">
 <?php

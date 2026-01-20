@@ -11,6 +11,8 @@
  * @version $Id: DrByte 2020 Oct 19 Modified in v1.5.7a $
  */
 ?>
+<!-- PayPal JavaScript SDK v6 Initialization -->
+<script src="<?php echo DIR_WS_MODULES; ?>payment/paypal/paypal_sdk_v6.js"></script>
 <div class="centerColumn" id="shoppingCartDefault">
 <?php
   if ($flagHasCartContents) {

@@ -264,4 +264,43 @@ class paypal_rest_config {
     public function getClientId() {
         return $this->client_id;
     }
+
+    /**
+     * Get client token for PayPal JavaScript SDK v6 initialization
+     * This is separate from access token and used only for SDK initialization
+     * Returns a browser-safe token that can be passed to the frontend
+     */
+    public function getClientToken() {
+        $url = $this->base_url . '/v1/oauth2/token';
+
+        $headers = array(
+            'Accept: application/json',
+            'Accept-Language: en_US',
+            'Authorization: Basic ' . base64_encode($this->client_id . ':' . $this->secret),
+            'Content-Type: application/x-www-form-urlencoded'
+        );
+
+        // Use response_type=client_token for SDK v6
+        $data = 'grant_type=client_credentials&response_type=client_token';
+
+        $response = $this->makeRequest($url, 'POST', $headers, $data);
+
+        if ($response && isset($response['access_token'])) {
+            $this->debugLog('getClientToken', array(
+                'action' => 'client_token_generated',
+                'token_type' => $response['token_type'],
+                'expires_in' => $response['expires_in'],
+                'timestamp' => date('Y-m-d H:i:s')
+            ));
+
+            return $response['access_token'];
+        }
+
+        $this->debugLog('getClientToken', array(
+            'error' => 'Failed to generate client token',
+            'timestamp' => date('Y-m-d H:i:s')
+        ));
+
+        return false;
+    }
 }
