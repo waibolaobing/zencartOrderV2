@@ -1,0 +1,64 @@
+services:
+  # Initialization service - Copy image code to local
+  init:
+    image: ghcr.io/kinglingspree/zencart-web-x86:20251209
+    platform: linux/amd64
+    container_name: zencart-init
+    volumes:
+      - ./code:/tmp/zencart-code
+      - ./orderv2code:/tmp/orderv2-source
+    command: >
+      sh -c "
+        if [ ! -f /tmp/zencart-code/.initialized ]; then
+          echo 'Initializing ZenCart code...';
+          mkdir -p /tmp/zencart-code;
+          cp -r /var/www/html/* /tmp/zencart-code/;
+          touch /tmp/zencart-code/.initialized;
+          echo 'ZenCart code initialization completed.';
+        else
+          echo 'ZenCart code already initialized, skipping...';
+        fi
+      "
+    networks:
+      - zencart-network
+
+  # Zen Cart Web service (contains complete code)
+  web:
+    image: ghcr.io/kinglingspree/zencart-web-x86:20251209
+    platform: linux/amd64
+    container_name: zencart-web
+    ports:
+      - "8087:8087"
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html
+    volumes:
+      - ./code:/var/www/html
+    command: >
+      sh -c "
+        echo 'Mutex posixsem' >> /etc/apache2/apache2.conf &&
+        docker-php-entrypoint apache2-foreground
+      "
+    depends_on:
+      - init
+      - db
+    networks:
+      - zencart-network
+    restart: unless-stopped
+
+  # MySQL database (contains initialization data)
+  db:
+    image: ghcr.io/kinglingspree/zencart-mysql-x86:20251209
+    platform: linux/amd64
+    container_name: zencart-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: zencart
+    networks:
+      - zencart-network
+    restart: unless-stopped
+
+networks:
+  zencart-network:
+    driver: bridge

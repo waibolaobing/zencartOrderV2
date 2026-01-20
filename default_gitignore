@@ -1,0 +1,24 @@
+# MCP/Claude directories
+.claude/
+
+# EFFICIENT GITIGNORE: Exclude everything by default, then include specific paths
+# This approach is much faster and more reliable than including everything first
+#
+# 📋 Git Tracking Configuration:
+#    ✓ Only tracking includes/modules/payment/ directory (PayPal modules)
+#    ✓ Also tracking paypal_rest_config.php and paypal_rest_v2.php
+#    ✓ Excludes all other files and directories for performance
+#
+# Performance: This configuration avoids scanning large ZenCart codebase
+
+# Always exclude these system files everywhere
+**/.DS_Store
+**/Thumbs.db
+**/*.swp
+**/*.swo
+**/*~
+**/*.bak
+**/*.backup
+**/*.old
+**/Test/
+**/test/
