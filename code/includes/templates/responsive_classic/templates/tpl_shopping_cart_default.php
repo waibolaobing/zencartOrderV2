@@ -195,6 +195,16 @@ if (defined('MODULE_PAYMENT_PAYPALWPP_STATUS') && MODULE_PAYMENT_PAYPALWPP_STATU
 ?>
 <!-- ** END PAYPAL EXPRESS CHECKOUT ** -->
 
+<!-- ** BEGIN PAYPAL PAY LATER (SDK v6) ** -->
+<?php
+if (defined('MODULE_PAYMENT_PAYPALWPP_STATUS') && MODULE_PAYMENT_PAYPALWPP_STATUS == 'True') {
+?>
+<script src="<?php echo DIR_WS_MODULES; ?>payment/paypal/paylater_checkout.js"></script>
+<?php
+}
+?>
+<!-- ** END PAYPAL PAY LATER ** -->
+
 <?php
       if (SHOW_SHIPPING_ESTIMATOR_BUTTON == '2') {
 /**

@@ -264,4 +264,66 @@ class paypal_rest_config {
     public function getClientId() {
         return $this->client_id;
     }
+
+    /**
+     * Get client token for PayPal JavaScript SDK v6 initialization
+     * This is a separate method from getAccessToken() - DO NOT convert the existing method
+     *
+     * @return string|false Client token or false on failure
+     */
+    public function getClientToken() {
+        $url = $this->base_url . '/v1/oauth2/token';
+
+        $headers = array(
+            'Accept: application/json',
+            'Accept-Language: en_US',
+            'Authorization: Basic ' . base64_encode($this->client_id . ':' . $this->secret),
+            'Content-Type: application/x-www-form-urlencoded'
+        );
+
+        // Note: response_type=client_token is required for SDK v6
+        $data = 'grant_type=client_credentials&response_type=client_token';
+
+        // Retry logic for client token generation (max 2 attempts)
+        $max_attempts = 2;
+        $attempt = 0;
+
+        while ($attempt < $max_attempts) {
+            $attempt++;
+            $response = $this->makeRequest($url, 'POST', $headers, $data);
+
+            if ($response && isset($response['access_token'])) {
+                $this->debugLog('getClientToken', array(
+                    'action' => 'client_token_generated',
+                    'token_type' => $response['token_type'],
+                    'expires_in' => $response['expires_in'],
+                    'attempt' => $attempt,
+                    'timestamp' => date('Y-m-d H:i:s')
+                ));
+
+                // Return the access_token as clientToken (browser-safe token)
+                return $response['access_token'];
+            }
+
+            // Log failure and retry if not last attempt
+            if ($attempt < $max_attempts) {
+                $this->debugLog('getClientToken', array(
+                    'action' => 'client_token_generation_failed_retrying',
+                    'attempt' => $attempt,
+                    'max_attempts' => $max_attempts,
+                    'timestamp' => date('Y-m-d H:i:s')
+                ));
+                sleep(1); // Wait 1 second before retry
+            }
+        }
+
+        // All attempts failed
+        $this->debugLog('getClientToken', array(
+            'error' => 'Failed to get client token after all attempts',
+            'attempts' => $attempt,
+            'timestamp' => date('Y-m-d H:i:s')
+        ));
+
+        return false;
+    }
 }
